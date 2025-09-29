@@ -3,6 +3,7 @@
 import { useState } from "react";
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -119,13 +120,19 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+            className="w-full bg-teal-600 text-white py-2 rounded-lg cursor-pointer hover:bg-teal-700 transition"
           >
             {loading ? "Signing up..." : "Sign Up"}
           </button>
         </form>
 
         {msg && <p className="text-center text-sm mt-2 text-red-500">{msg}</p>}
+        <Link
+          href={"/login"}
+          className=" text-teal-500 underline hover:no-underline ml-38 block mt-5 p-2 rounded-lg "
+        >
+          Log In
+        </Link>
       </div>
     </div>
   );

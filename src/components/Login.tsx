@@ -2,6 +2,7 @@
 import { useState } from "react";
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -50,7 +51,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="bg-white shadow-md rounded-xl p-8 w-full max-w-md">
+      <div className="bg-white shadow-md rounded-xl p-8 w-full max-w-md min-h-100">
         <h1 className="text-2xl font-bold mb-6 text-gray-800 text-center">
           Login
         </h1>
@@ -87,7 +88,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
+            className="w-full bg-teal-600 hover:bg-teal-700 cursor-pointer text-white font-semibold py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
@@ -102,6 +103,12 @@ export default function LoginPage() {
             {msg}
           </p>
         )}
+        <Link
+          href={"/signup"}
+          className=" text-teal-500 underline hover:no-underline ml-38 block mt-5 p-2 rounded-lg "
+        >
+          Sign Up
+        </Link>
       </div>
     </div>
   );
