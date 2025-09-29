@@ -3,14 +3,18 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verify } from "jsonwebtoken";
+import { cookies } from 'next/headers';
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   console.log("middleware");
   if (pathname.startsWith("/admin")) {
-    const token = req.cookies.get("token")?.value;
+    const cookieStore = await cookies();
+  console.log({cookieStore})
+  const token = cookieStore.get('token')?.value;
+    // const token = req.cookies.get("token")?.value;
     console.log(token);
     if (!token) {
       console.log("no token");
