@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { userAtom } from "@/lib/state";
 
-export default function useCheckIsLoggedIn() {
+export default function useCheckIsLoggedIn(isHomePage:boolean) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [checking, setChecking] = useState(true);
   const router = useRouter();
@@ -25,10 +25,12 @@ export default function useCheckIsLoggedIn() {
             console.log("logged in")
           } else {
             setIsLoggedIn(false);
-            router.replace("/login");
+            if(!isHomePage)
+              router.replace("/login");
           }
         } catch {
           setIsLoggedIn(false);
+        if(!isHomePage)
           router.replace("/login");
         } finally {
           setChecking(false);

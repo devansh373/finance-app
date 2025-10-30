@@ -12,6 +12,7 @@ export interface Transaction {
   type: string;
   createdAt: string;
   userId?: User;
+  status: string;
 }
 
 export interface Product {
@@ -34,5 +35,9 @@ export interface User {
   wallet: number;
   watchlist?: string[];
   role: "USER" | "ADMIN";
-  kycDocumentPath: string;
+  kyc: {
+    pan: { panNumber: string,status:string };
+    aadhaar?: { aadhaarNumber: string };
+  };
+  createdAt: string;
 }

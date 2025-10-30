@@ -77,7 +77,7 @@ export default function ProfilePage() {
           </div>
           <div className="text-right">
             <p className="text-gray-600">Wallet</p>
-            <p className="text-xl font-semibold">₹{user.wallet}</p>
+            <p className="text-xl font-semibold">₹{user.wallet?.balance}</p>
           </div>
         </div>
 
@@ -112,11 +112,11 @@ export default function ProfilePage() {
               {portfolio.transactions.map((txn) => (
                 <div key={txn._id} className="flex justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
-                    <p className="font-semibold">{txn.productId.name}</p>
-                    <p className="text-gray-500 text-sm">{txn.productId.category}</p>
+                    <p className="font-semibold">{txn.product.name}</p>
+                    <p className="text-gray-500 text-sm">{txn.product.category}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-gray-700">{txn.units} units @ ₹{txn.priceAtTxn}</p>
+                    <p className="text-gray-700">{txn.meta.units} units @ ₹{txn.meta.priceAtTxn}</p>
                     <p className="text-gray-500 text-sm">{new Date(txn.createdAt).toLocaleDateString()}</p>
                   </div>
                 </div>

@@ -21,10 +21,10 @@ export default function SignupPage() {
     if (!name || name.length < 2) return "Name must be at least 2 characters";
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) return "Invalid email";
     if (!password || password.length < 6) return "Password must be at least 6 characters";
-    if (!pan || !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan)) return "Invalid PAN number";
-    if (!document) return "Please upload a document";
-    const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
-    if (!allowedTypes.includes(document.type)) return "Only JPG, PNG or PDF allowed";
+    // if (!pan || !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan)) return "Invalid PAN number";
+    // if (!document) return "Please upload a document";
+    // const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+    // if (!allowedTypes.includes(document.type)) return "Only JPG, PNG or PDF allowed";
     return null;
   };
 
@@ -44,15 +44,15 @@ export default function SignupPage() {
       formData.append("name", name);
       formData.append("email", email);
       formData.append("password", password);
-      formData.append("panNumber", pan);
-      formData.append("document", document!);
+      // formData.append("panNumber", pan);
+      // formData.append("document", document!);
 
       await api.post("/auth/signup", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       setMsg(" Signup successful! Redirecting...");
-      router.push("/")
+      router.push("/kyc/pan")
     } catch (err) {
         if(err instanceof Error)
       setMsg(err.message || "Error signing up");
@@ -96,7 +96,7 @@ export default function SignupPage() {
             />
           </div>
 
-          <div>
+          {/* <div>
             <label className="block font-medium mb-1">PAN Number</label>
             <input
               type="text"
@@ -115,7 +115,7 @@ export default function SignupPage() {
               onChange={(e) => setDocument(e.target.files?.[0] || null)}
               className="w-fit border rounded-lg p-1 cursor-pointer"
             />
-          </div>
+          </div> */}
 
           <button
             type="submit"

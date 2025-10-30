@@ -10,7 +10,9 @@ export default function HomePage() {
       <div className="space-y-6">
         
         <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-          Welcome to <span className="text-teal-600">Mini Finance</span>
+          Welcome to <span className="text-teal-600">Mini Finance
+            
+          </span>
         </h1>
 
         

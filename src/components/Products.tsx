@@ -36,8 +36,12 @@ export default function ProductsPage() {
 
   useEffect(() => {
     api
-      .get("/products")
-      .then((res) => setProducts(res.data))
+      // .get("/products") //db products
+      .get("/products/search") //api fetched products
+      .then((res) => {
+        // console.log(res.data);
+        setProducts(res.data.stocks ? res.data.stocks : res.data);
+      })
       .catch(() =>
         setError("Failed to fetch products. Please try again later.")
       )
@@ -66,7 +70,7 @@ export default function ProductsPage() {
             {products.map((p) => (
               <Link
                 key={p._id}
-                href={`/products/${p._id}`}
+                href={`/products/${p._id?p._id:p.displaySymbol}`}
                 className="group block bg-white rounded-xl shadow-md border border-transparent 
                            transform transition-all duration-300 
                            hover:shadow-xl hover:border-teal-500 hover:-translate-y-1"
@@ -74,21 +78,23 @@ export default function ProductsPage() {
                 <div className="p-6 flex flex-col h-full">
                   <div className="mb-2">
                     <span className="inline-block bg-teal-100 text-teal-800 text-xs font-semibold px-2.5 py-1 rounded-full">
-                      {p.category}
+                      {/* {p.category} */}
+                      {p.category ? p.category : p.type}
                     </span>
                   </div>
 
                   <h2 className="text-xl font-bold text-gray-900 leading-tight">
-                    {p.name}
+                    {p.name ? p.name : p.description}
                   </h2>
 
-                  <p className="text-xl font-bold text-gray-800 mt-4">
-                    ₹{p.price.toLocaleString("en-IN")}
+                  {/* <p className="text-xl font-bold text-gray-800 mt-4">
+                    ₹
+                    {p.price ? p.price.toLocaleString("en-IN") : 0}
                   </p>
 
                   <p className="text-sm text-gray-500 mt-1">
-                    P/E Ratio: {p.peRatio}
-                  </p>
+                    P/E Ratio: {p.peRatio ? p.peRatio : "N/A"}
+                  </p> */}
 
                   <div className="mt-auto pt-4">
                     <span className="font-semibold text-teal-600 group-hover:underline">

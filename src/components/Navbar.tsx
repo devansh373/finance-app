@@ -10,7 +10,7 @@ import useCheckIsLoggedIn from "@/app/hooks/useCheckIsLoggedIn";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname(); 
-  const { isLoggedIn } = useCheckIsLoggedIn();
+  const { isLoggedIn } = useCheckIsLoggedIn(true);
 
   
   const navLinks = [
