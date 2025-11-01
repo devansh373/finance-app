@@ -108,9 +108,10 @@ const JWT_SECRET = process.env.JWT_SECRET || "";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = req.cookies.get("token")?.value;
+  // console.log(pathname.startsWith("/profile"))
 
   // Protect admin + kyc routes
-  if (pathname.startsWith("/admin") || pathname.startsWith("/kyc")) {
+  if (pathname.startsWith("/admin") || pathname.startsWith("/kyc") ||pathname.startsWith("/profile")) {
     if (!token) {
       const loginUrl = new URL("/login", req.url);
       loginUrl.searchParams.set("reason", "unauthorized");
@@ -163,5 +164,5 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   runtime: "nodejs",
-  matcher: ["/admin/:path*", "/kyc/:path*"],
+  matcher: ["/admin/:path*", "/kyc/:path*","/profile/:path*"],
 };
