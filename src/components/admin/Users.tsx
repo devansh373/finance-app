@@ -87,10 +87,10 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
             valueClassName={`font-semibold ${kycStatusClass}`}
           />
           {/* Conditionally show PAN number if it exists */}
-          {user.kyc.pan?.number && (
+          {user.kyc.pan?.panNumber && (
             <InfoPair
               label="PAN Number"
-              value={user.kyc.pan.number}
+              value={user.kyc.pan.panNumber}
               valueClassName="font-mono"
             />
           )}

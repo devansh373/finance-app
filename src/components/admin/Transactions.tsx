@@ -13,7 +13,7 @@ export default function TransactionsPage() {
       try {
         const res = await api.get("/admin/transactions");
         setTransactions(res.data);
-      } catch (err) {
+      } catch  {
         setError("Failed to fetch transactions.");
       } finally {
         setLoading(false);

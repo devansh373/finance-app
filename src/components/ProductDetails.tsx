@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // "use client";
 // import { useEffect, useState } from "react";
 // import { useParams } from "next/navigation";
@@ -386,7 +388,6 @@
 //   );
 // }
 
-
 "use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -441,14 +442,14 @@ interface NewsItem {
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [chartData, setChartData] = useState<ChartPoint[]>([]);
+  const [product] = useState<Product | null>(null);
+  const [chartData] = useState<ChartPoint[]>([]);
   const [quote, setQuote] = useState<any>(null);
   const [news, setNews] = useState<NewsItem[]>([]);
   const [overallSentiment, setOverallSentiment] = useState<string>("neutral");
   const [averageScore, setAverageScore] = useState<string>("0");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error] = useState("");
   const [units, setUnits] = useState<number>(1);
   const [msg, setMsg] = useState<{
     type: "success" | "error";
@@ -456,11 +457,10 @@ export default function ProductDetailPage() {
   } | null>(null);
   const [inWatchlist, setInWatchlist] = useState(false);
   const [wallet, setWallet] = useState<number>();
-  const [selectedProduct,] = useAtom(selectedProductAtom)
+  const [selectedProduct] = useAtom(selectedProductAtom);
 
   useEffect(() => {
     if (!id) return;
-    
 
     // Fetch product details
     // api
@@ -538,7 +538,7 @@ export default function ProductDetailPage() {
       }
       const res = await api.post("/transactions/buy", { productId: id, units });
       setMsg({ type: "success", text: "Purchase successful" });
-      setWallet((prev) => prev - totalCost);
+      setWallet((prev: any) => prev - totalCost);
       console.log("Txn:", res.data.txn);
     } catch (err) {
       if (err instanceof Error)
@@ -577,7 +577,7 @@ export default function ProductDetailPage() {
   const totalCost = product
     ? product.price * units
     : quote?.c?.toFixed(2) * units;
-  const insufficient = wallet && totalCost > wallet;
+  const insufficient = wallet ? totalCost > wallet : true;
 
   const data = {
     labels: chartData.map((c) => c.date),
@@ -607,10 +607,12 @@ export default function ProductDetailPage() {
         <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-normal text-white">
-              {product?product.name:selectedProduct?.description || "Product Name"}
+              {product
+                ? product.name
+                : selectedProduct?.description || "Product Name"}
             </h1>
             <p className="text-gray-400 mt-1 text-lg">
-              {product?product.category:selectedProduct?.type || "Category"}
+              {product ? product.category : selectedProduct?.type || "Category"}
             </p>
           </div>
           <div className="text-right border-l pl-4 border-gray-700">
@@ -622,7 +624,7 @@ export default function ProductDetailPage() {
         </div>
 
         {/* --- */}
-        
+
         {/* ===== Metrics ===== */}
         <div className="grid md:grid-cols-4 gap-4">
           <div className="bg-gray-800 p-4 rounded-xl border border-gray-700">
@@ -632,7 +634,11 @@ export default function ProductDetailPage() {
             </p>
             <p
               className={`text-sm mt-1 ${
-                (quote?.d > 0) ? 'text-emerald-400' : (quote?.d < 0) ? 'text-rose-500' : 'text-gray-400'
+                quote?.d > 0
+                  ? "text-emerald-400"
+                  : quote?.d < 0
+                  ? "text-rose-500"
+                  : "text-gray-400"
               }`}
             >
               Change: {quote?.d?.toFixed(2) || "0.00"} (
@@ -657,8 +663,12 @@ export default function ProductDetailPage() {
             </p>
           </div>
           <div className="bg-gray-800 p-4 rounded-xl border border-gray-700">
-            <p className="text-gray-400 text-sm font-medium">Overall Sentiment</p>
-            <p className={`text-3xl text-white capitalize mt-1 ${sentimentColor}`}>
+            <p className="text-gray-400 text-sm font-medium">
+              Overall Sentiment
+            </p>
+            <p
+              className={`text-3xl text-white capitalize mt-1 ${sentimentColor}`}
+            >
               {overallSentiment}
             </p>
             <p className="text-sm text-gray-500 mt-1">
@@ -666,7 +676,7 @@ export default function ProductDetailPage() {
             </p>
           </div>
         </div>
-        
+
         {/* --- */}
 
         {/* ===== New Two-Column Layout for Main Content and News ===== */}
@@ -679,7 +689,9 @@ export default function ProductDetailPage() {
               {chartData.length > 0 ? (
                 <Line data={data} />
               ) : (
-                <p className="text-gray-400">No chart data available for this period.</p>
+                <p className="text-gray-400">
+                  No chart data available for this period.
+                </p>
               )}
             </div>
 
@@ -713,7 +725,7 @@ export default function ProductDetailPage() {
                     )}
                     <button
                       type="submit"
-                      disabled={units <= 0 || insufficient}
+                      disabled={!wallet || units <= 0 || insufficient}
                       className={`px-6 py-3 rounded-lg font-bold text-white transition duration-200 w-full sm:w-auto ${
                         units > 0 && !insufficient
                           ? "bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/30"
@@ -732,7 +744,9 @@ export default function ProductDetailPage() {
                         : "bg-indigo-600 text-white hover:bg-indigo-700 border border-indigo-600"
                     }`}
                   >
-                    {inWatchlist ? "★ Remove from Watchlist" : "☆ Add to Watchlist"}
+                    {inWatchlist
+                      ? "★ Remove from Watchlist"
+                      : "☆ Add to Watchlist"}
                   </button>
 
                   {msg && (

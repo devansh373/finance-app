@@ -114,9 +114,6 @@
 //   );
 // }
 
-
-
-
 "use client";
 import { useState } from "react";
 import api from "@/lib/api";
@@ -173,17 +170,21 @@ export default function LoginPage() {
 
   return (
     // Updated background to a dark gray
-    <div className="flex items-center justify-center min-h-screen bg-gray-900 p-4">
+    <div className="flex flex-col items-center  min-h-screen bg-gray-900 p-4">
+      <Link
+        href={"/"}
+        className="w-full mt-5 pl-5 underline hover:text-white text-xl mb-30 text-teal-300"
+      >
+        Home
+      </Link>
       {/* Updated card background, border, and shadow for the dark theme */}
       <div className="bg-gray-800 border border-gray-700 shadow-2xl rounded-xl p-8 w-full max-w-md">
-        
         {/* Title color changed to white/accent */}
         <h1 className="text-3xl font-bold mb-6 text-white text-center">
           Login
         </h1>
 
         <form onSubmit={handleLogin} className="space-y-6">
-          
           {/* Email Input */}
           <div>
             {/* Label text color changed */}
@@ -233,15 +234,15 @@ export default function LoginPage() {
         {msg && (
           <p
             className={`mt-4 p-3 rounded-lg text-center font-medium ${
-              isSuccess 
-                ? "text-emerald-300 bg-emerald-900/50" 
+              isSuccess
+                ? "text-emerald-300 bg-emerald-900/50"
                 : "text-rose-300 bg-rose-900/50"
             }`}
           >
             {msg}
           </p>
         )}
-        
+
         {/* Sign Up Link - Updated color for link contrast */}
         <Link
           href={"/signup"}
@@ -253,7 +254,6 @@ export default function LoginPage() {
     </div>
   );
 }
-
 
 // "use client";
 // import { useState } from "react";
@@ -406,4 +406,3 @@ export default function LoginPage() {
 //     </div>
 //   );
 // }
-

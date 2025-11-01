@@ -155,8 +155,8 @@ export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [pan, setPan] = useState("");
-  const [document, setDocument] = useState<File | null>(null);
+  // const [pan, setPan] = useState("");
+  // const [document, setDocument] = useState<File | null>(null);
 
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -209,7 +209,13 @@ export default function SignupPage() {
 
   return (
     // Updated background to dark gray
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-6 text-white">
+    <div className="flex flex-col items-center  min-h-screen bg-gray-900 p-4">
+      <Link
+        href={"/"}
+        className="w-full mt-5 pl-5 underline hover:text-white text-xl mb-30 text-teal-300"
+      >
+        Home
+      </Link>
       {/* Updated card background, border, and shadow for the dark theme */}
       <div className="bg-gray-800 p-8 rounded-xl border border-gray-700 shadow-2xl w-full max-w-md space-y-6">
         

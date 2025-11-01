@@ -1,14 +1,14 @@
 export interface Transaction {
   _id: string;
-  productId: {
+  product: {
     _id: string;
     name: string;
     category: string;
     price: number;
   };
-  units: number;
-  priceAtTxn: number;
-  totalAmount: number;
+  meta: { units: number; priceAtTxn: number };
+
+  amount: number;
   type: string;
   createdAt: string;
   userId?: User;
@@ -32,11 +32,11 @@ export interface User {
   _id: string;
   name: string;
   email: string;
-  wallet: number;
+  wallet: { balance: number };
   watchlist?: string[];
   role: "USER" | "ADMIN";
   kyc: {
-    pan: { panNumber: string,status:string };
+    pan: { panNumber: string; status: string };
     aadhaar?: { aadhaarNumber: string };
   };
   createdAt: string;

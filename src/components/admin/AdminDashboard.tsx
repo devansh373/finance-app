@@ -343,7 +343,7 @@
 
 
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { Transaction, User } from "@/types/types";
 import {
@@ -357,20 +357,20 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import Users from "./Users";
+// import Users from "./Users";
 
-const menuItems = [
-  { key: "dashboard", label: "Dashboard" },
-  { key: "pendingKyc", label: "Pending KYC" },
-  { key: "users", label: "Users" },
-  { key: "transactions", label: "Transactions" },
-  { key: "logout", label: "Logout" },
-];
+// const menuItems = [
+//   { key: "dashboard", label: "Dashboard" },
+//   { key: "pendingKyc", label: "Pending KYC" },
+//   { key: "users", label: "Users" },
+//   { key: "transactions", label: "Transactions" },
+//   { key: "logout", label: "Logout" },
+// ];
 
 export default function AdminDashboardPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, ] = useState("dashboard");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -383,7 +383,7 @@ export default function AdminDashboardPage() {
         ]);
         setUsers(usersRes.data);
         setTransactions(txnRes.data);
-      } catch (err) {
+      } catch  {
         setError("Failed to fetch dashboard data.");
       } finally {
         setLoading(false);
@@ -392,10 +392,10 @@ export default function AdminDashboardPage() {
     fetchData();
   }, []);
 
-  const pendingKycUsers = useMemo(
-    () => users.filter((u) =>   u.kyc.pan?.status === "Approval_Pending"),
-    [users]
-  );
+  // const pendingKycUsers = useMemo(
+  //   () => users.filter((u) =>   u.kyc.pan?.status === "Approval_Pending"),
+  //   [users]
+  // );
 
   // 📊 Example chart data
   const txnVolumeByType = [

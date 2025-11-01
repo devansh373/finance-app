@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // "use client";
 // import { useEffect, useState } from "react";
 // import Link from "next/link";
@@ -122,7 +123,7 @@ import Link from "next/link";
 import api from "@/lib/api";
 import { selectedProductAtom } from "@/store/ProductAtom";
 import { useAtom } from "jotai";
-import { Loader2, Zap } from "lucide-react"; // Importing icons for better loading state
+import {  Zap } from "lucide-react"; // Importing icons for better loading state
 
 interface Product {
   _id: string;
@@ -198,7 +199,7 @@ export default function ProductsPage() {
           <ErrorDisplay message={error} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((p) => (
+            {products.map((p:any) => (
               <Link
                 key={p._id || p.displaySymbol} // Use displaySymbol as fallback key
                 href={`/products/${p._id ? p._id : p.displaySymbol}`}

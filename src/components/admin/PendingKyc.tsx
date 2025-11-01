@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
-import { User } from "@/types/types";
+// import { User } from "@/types/types";
 
 export default function PendingKycPage() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -26,9 +27,9 @@ export default function PendingKycPage() {
         setLoading(false);
       }
     };
-  const handleApprove = async (id) => {
+  const handleApprove = async (id:any) => {
     try {
-      const res = await api.patch("/admin/update-kyc-status/"+id, {
+       await api.patch("/admin/update-kyc-status/"+id, {
         status: "Approved",
       });
       fetchUsers();
@@ -37,7 +38,7 @@ export default function PendingKycPage() {
     }
   };
 
-  const pendingKycUsers =  users?.filter((u) => u.status === "Approval_Pending");
+  const pendingKycUsers =  users?.filter((u:any) => u.status === "Approval_Pending");
 
   if (loading) return <p>Loading KYC requests...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
@@ -66,7 +67,7 @@ export default function PendingKycPage() {
             </tr>
           </thead>
           <tbody>
-            {pendingKycUsers.length>0 && pendingKycUsers.map((u) => (
+            {pendingKycUsers.length>0 && pendingKycUsers.map((u:any) => (
               <tr key={u._id} className="border-b hover:bg-gray-50 ">
                 <td className="px-6 py-4">{u.user?.name}</td>
                 <td className="px-6 py-4">{u.user?.email}</td>
