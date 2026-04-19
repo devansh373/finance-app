@@ -35,16 +35,16 @@ export default function PanPage() {
     try {
       const formData = new FormData();
       formData.append("panNumber", pan);
-      formData.append("panImage", document!); // must match backend upload.single("panImage")
+      formData.append("panImage", document!); 
 
       await api.post("/auth/kyc/pan", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true, // so JWT cookie goes along
+        withCredentials: true, 
       });
 
       setMsg("PAN verified successfully!");
-      // router.push("/kyc/aadhaar"); // go to next step
-      router.push("/"); // go to next step
+      
+      router.push("/"); 
     } catch (err) {
       if (err instanceof Error) setMsg(err.message || "Error verifying PAN");
     } finally {

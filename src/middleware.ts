@@ -4,82 +4,52 @@
 
 // const JWT_SECRET = process.env.JWT_SECRET || "";
 
-// export function middleware(req: NextRequest) {
-//   const { pathname } = req.nextUrl;
-//   console.log("middleware");
-
-//   const token = req.cookies.get("token")?.value;
-//   console.log("Token from cookie:", token);
-//   if (pathname.startsWith("/admin")) {
-
-//     if (!token) {
-//       console.log("no token");
-//       return NextResponse.redirect(new URL("/login", req.url));
-//     }
-    
-//     try {
-//       const decoded = verify(token, JWT_SECRET) as { id: string; role: string };
-//       console.log("Decoded:", decoded);
-      
-//       if (decoded.role !== "ADMIN") {
-//         return NextResponse.redirect(new URL("/login", req.url));
-//       }
-      
-//       return NextResponse.next();
-//     } catch (err) {
-//       console.error("JWT verify error:", err);
-//       return NextResponse.redirect(new URL("/login", req.url));
-//     }
-//   }
-//   if (pathname.startsWith("/kyc")) {
-//     if (!token) {
-//       console.log("no token");
-//       return NextResponse.redirect(new URL("/login", req.url));
-//     }
-    
-//     try {
-//       verify(token, JWT_SECRET); // we don’t care about role, just valid
-//     } catch (err) {
-//       console.error("JWT verify error:", err);
-//       return NextResponse.redirect(new URL("/login", req.url));
-//     }
-//   }
-//   return NextResponse.next();
-// }
-
-// export const config = {
-//    runtime: "nodejs",
-//   matcher: ["/admin/:path*"],
-// };
-
-
-// import { NextResponse } from "next/server";
-// import type { NextRequest } from "next/server";
-// import { verify } from "jsonwebtoken";
-
-// const JWT_SECRET = process.env.JWT_SECRET || "";
-
-// export function middleware(req: NextRequest) {
+// export async function middleware(req: NextRequest) {
 //   const { pathname } = req.nextUrl;
 //   const token = req.cookies.get("token")?.value;
+//   // console.log(pathname.startsWith("/profile"))
 
-//   // Protect both admin and kyc routes
-//   if (pathname.startsWith("/admin") || pathname.startsWith("/kyc")) {
+//   // Protect admin + kyc routes
+//   if (pathname.startsWith("/admin") || pathname.startsWith("/kyc") ||pathname.startsWith("/profile")) {
 //     if (!token) {
 //       const loginUrl = new URL("/login", req.url);
 //       loginUrl.searchParams.set("reason", "unauthorized");
-//       loginUrl.searchParams.set("next", pathname); // redirect back after login
+//       loginUrl.searchParams.set("next", pathname);
 //       return NextResponse.redirect(loginUrl);
 //     }
 
 //     try {
-//       const decoded = verify(token, JWT_SECRET) as { id: string; role: string };
+//       const decoded = verify(token, JWT_SECRET) as {
+//         id: string;
+//         role: string;
+//         kyc?: {
+//           pan?: { status: string };
+//           aadhaar?: { status: string };
+//         };
+//       };
 
+//       // ✅ Admin routes must have role=ADMIN
 //       if (pathname.startsWith("/admin") && decoded.role !== "ADMIN") {
 //         const loginUrl = new URL("/login", req.url);
 //         loginUrl.searchParams.set("reason", "forbidden");
 //         return NextResponse.redirect(loginUrl);
 //       }
+
+//       // ✅ KYC routes: block if already submitted/approved
+//       if (pathname.startsWith("/kyc")) {
+//         const isPanPage = pathname.includes("pan");
+//         const isAadhaarPage = pathname.includes("aadhaar");
+
+//         if (isPanPage && decoded.kyc?.pan?.status && decoded.kyc.pan.status !== "Rejected") {
+//           return NextResponse.redirect(new URL("/profile", req.url));
+//         }
+
+//         if (isAadhaarPage && decoded.kyc?.aadhaar?.status && decoded.kyc.aadhaar.status !== "Rejected") {
+//           return NextResponse.redirect(new URL("/profile", req.url));
+//         }
+//       }
+
+//       // add profile protection if kyc not done
 
 //       return NextResponse.next();
 //     } catch (err) {
@@ -95,23 +65,37 @@
 
 // export const config = {
 //   runtime: "nodejs",
-//   matcher: ["/admin/:path*", "/kyc/:path*"], // protect both
+//   matcher: ["/admin/:path*", "/kyc/:path*","/profile/:path*"],
 // };
-
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verify } from "jsonwebtoken";
+import api from "./lib/api";
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
+
+// ⚙️ A small helper to fetch user info from your API
+async function getUserKyc(token: string) {
+  try {
+    const res = await api.get(`/auth/profile`, { headers: { Cookie: `token=${token}` } });
+    console.log(res.data);
+    return res.data?.kyc;
+  } catch (err) {
+    console.error("Error fetching user from API:", err);
+    return null;
+  }
+}
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = req.cookies.get("token")?.value;
-  // console.log(pathname.startsWith("/profile"))
 
-  // Protect admin + kyc routes
-  if (pathname.startsWith("/admin") || pathname.startsWith("/kyc") ||pathname.startsWith("/profile")) {
+  if (
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/kyc") ||
+    pathname.startsWith("/profile")
+  ) {
     if (!token) {
       const loginUrl = new URL("/login", req.url);
       loginUrl.searchParams.set("reason", "unauthorized");
@@ -120,34 +104,28 @@ export async function middleware(req: NextRequest) {
     }
 
     try {
-      const decoded = verify(token, JWT_SECRET) as {
-        id: string;
-        role: string;
-        kyc?: {
-          pan?: { status: string };
-          aadhaar?: { status: string };
-        };
-      };
+      const decoded = verify(token, JWT_SECRET) as { id: string; role: string };
 
-      // ✅ Admin routes must have role=ADMIN
+      // ✅ Block /admin for non-admin users
       if (pathname.startsWith("/admin") && decoded.role !== "ADMIN") {
         const loginUrl = new URL("/login", req.url);
         loginUrl.searchParams.set("reason", "forbidden");
         return NextResponse.redirect(loginUrl);
       }
 
-      // ✅ KYC routes: block if already submitted/approved
-      if (pathname.startsWith("/kyc")) {
-        const isPanPage = pathname.includes("pan");
-        const isAadhaarPage = pathname.includes("aadhaar");
+      // ✅ Fetch user KYC from API or DB
+      const kyc = await getUserKyc(token);
 
-        if (isPanPage && decoded.kyc?.pan?.status && decoded.kyc.pan.status !== "Rejected") {
-          return NextResponse.redirect(new URL("/profile", req.url));
+      // ✅ Protect profile route
+      if (pathname.startsWith("/profile")) {
+        if (!kyc?.pan || kyc.pan.status !== "Approved") {
+          return NextResponse.redirect(new URL("/kyc/pan", req.url));
         }
+      }
 
-        if (isAadhaarPage && decoded.kyc?.aadhaar?.status && decoded.kyc.aadhaar.status !== "Rejected") {
-          return NextResponse.redirect(new URL("/profile", req.url));
-        }
+      // ✅ Prevent accessing KYC form if already approved
+      if (pathname.startsWith("/kyc/pan") && kyc?.pan?.status === "Approved") {
+        return NextResponse.redirect(new URL("/profile", req.url));
       }
 
       return NextResponse.next();
@@ -164,5 +142,5 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   runtime: "nodejs",
-  matcher: ["/admin/:path*", "/kyc/:path*","/profile/:path*"],
+  matcher: ["/admin/:path*", "/kyc/:path*", "/profile/:path*"],
 };
