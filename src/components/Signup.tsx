@@ -4,7 +4,7 @@
 
 "use client";
 import { useState } from "react";
-import api from "@/lib/api"; 
+import api, { isAxiosError } from "@/lib/api"; 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, User, Mail, Lock, Eye, EyeOff } from "lucide-react"; 
@@ -17,7 +17,10 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); 
 
-  const [msg, setMsg] = useState("");
+  const [status, setStatus] = useState<{ message: string; type: "success" | "error" | null }>({
+    message: "",
+    type: null,
+  });
   const [loading, setLoading] = useState(false);
 
   const validate = () => {
@@ -32,12 +35,12 @@ export default function SignupPage() {
     e.preventDefault();
     const error = validate();
     if (error) {
-      setMsg(error);
+      setStatus({ message: error, type: "error" });
       return;
     }
 
     setLoading(true);
-    setMsg("");
+    setStatus({ message: "", type: null });
 
     try {
       const formData = new FormData();
@@ -47,16 +50,25 @@ export default function SignupPage() {
 
       await api.post("/auth/signup", formData);
 
-      setMsg(" Signup successful! Redirecting...");
+      setStatus({ message: "Signup successful! Redirecting...", type: "success" });
       router.push("/kyc/pan");
-    } catch (err) {
-      if (err instanceof Error) setMsg(err.message || "Error signing up");
+    } catch (err: unknown) {
+      console.error("Signup Error:", err);
+      let errorMsg = "Error signing up. Please try again.";
+      
+      if (isAxiosError(err)) {
+        errorMsg = err.response?.data?.msg || err.message || errorMsg;
+      } else if (err instanceof Error) {
+        errorMsg = err.message;
+      }
+      
+      setStatus({ message: errorMsg, type: "error" });
     } finally {
       setLoading(false);
     }
   };
 
-  const isSuccess = msg.includes("successful");
+
 
   return (
     
@@ -150,15 +162,15 @@ export default function SignupPage() {
         </form>
 
         {/* Message Area */}
-        {msg && (
+        {status.message && (
           <p
             className={`mt-4 p-3 rounded-lg text-center text-sm font-medium ${
-              isSuccess 
+              status.type === "success" 
                 ? "text-emerald-300 bg-emerald-900/50 border border-emerald-700" 
                 : "text-rose-300 bg-rose-900/50 border border-rose-700"
             }`}
           >
-            {msg}
+            {status.message}
           </p>
         )}
         

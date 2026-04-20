@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import api from "@/lib/api";
+import api, { isAxiosError } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
 export default function PanPage() {
@@ -8,7 +8,10 @@ export default function PanPage() {
 
   const [pan, setPan] = useState("");
   const [document, setDocument] = useState<File | null>(null);
-  const [msg, setMsg] = useState("");
+  const [status, setStatus] = useState<{ message: string; type: "success" | "error" | null }>({
+    message: "",
+    type: null,
+  });
   const [loading, setLoading] = useState(false);
 
   const validate = () => {
@@ -25,12 +28,12 @@ export default function PanPage() {
     e.preventDefault();
     const error = validate();
     if (error) {
-      setMsg(error);
+      setStatus({ message: error, type: "error" });
       return;
     }
 
     setLoading(true);
-    setMsg("");
+    setStatus({ message: "", type: null });
 
     try {
       const formData = new FormData();
@@ -42,11 +45,22 @@ export default function PanPage() {
         withCredentials: true, 
       });
 
-      setMsg("PAN verified successfully!");
+      setStatus({ message: "PAN submitted successfully! Redirecting...", type: "success" });
       
-      router.push("/"); 
-    } catch (err) {
-      if (err instanceof Error) setMsg(err.message || "Error verifying PAN");
+      setTimeout(() => {
+        router.push("/"); 
+      }, 1500);
+    } catch (err: unknown) {
+      console.error("PAN Submission Error:", err);
+      let errorMsg = "Error submitting PAN";
+      
+      if (isAxiosError(err)) {
+        errorMsg = err.response?.data?.msg || err.message || errorMsg;
+      } else if (err instanceof Error) {
+        errorMsg = err.message;
+      }
+      
+      setStatus({ message: errorMsg, type: "error" });
     } finally {
       setLoading(false);
     }
@@ -55,7 +69,7 @@ export default function PanPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6 text-black">
       <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4">
-        <h1 className="text-2xl font-bold text-gray-800 text-center">PAN Verification</h1>
+        <h1 className="text-2xl font-bold text-gray-800 text-center">PAN Submission</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block font-medium mb-1">PAN Number</label>
@@ -83,11 +97,15 @@ export default function PanPage() {
             disabled={loading}
             className="w-full bg-teal-600 text-white py-2 rounded-lg cursor-pointer hover:bg-teal-700 transition"
           >
-            {loading ? "Verifying..." : "Verify PAN"}
+            {loading ? "Submitting..." : "Submit PAN"}
           </button>
         </form>
 
-        {msg && <p className="text-center text-sm mt-2 text-red-500">{msg}</p>}
+        {status.message && (
+          <p className={`text-center text-sm mt-4 p-2 rounded ${status.type === "success" ? "text-emerald-700 bg-emerald-50" : "text-rose-600 bg-rose-50"}`}>
+            {status.message}
+          </p>
+        )}
       </div>
     </div>
   );

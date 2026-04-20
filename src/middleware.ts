@@ -116,16 +116,21 @@ export async function middleware(req: NextRequest) {
       // ✅ Fetch user KYC from API or DB
       const kyc = await getUserKyc(token);
 
+      const kycStatus = kyc?.pan?.status;
+
       // ✅ Protect profile route
       if (pathname.startsWith("/profile")) {
-        if (!kyc?.pan || kyc.pan.status !== "Approved") {
+        // Allow access if Approved OR Approval_Pending (so they can see the "In Progress" screen)
+        if (!kycStatus || (kycStatus !== "Approved" && kycStatus !== "Approval_Pending")) {
           return NextResponse.redirect(new URL("/kyc/pan", req.url));
         }
       }
 
-      // ✅ Prevent accessing KYC form if already approved
-      if (pathname.startsWith("/kyc/pan") && kyc?.pan?.status === "Approved") {
-        return NextResponse.redirect(new URL("/profile", req.url));
+      // ✅ Prevent accessing KYC form if already submitted/approved
+      if (pathname.startsWith("/kyc/pan")) {
+        if (kycStatus === "Approved" || kycStatus === "Approval_Pending") {
+          return NextResponse.redirect(new URL("/profile", req.url));
+        }
       }
 
       return NextResponse.next();

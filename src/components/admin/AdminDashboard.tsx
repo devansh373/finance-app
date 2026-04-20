@@ -346,6 +346,7 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { Transaction, User } from "@/types/types";
+import { Loader2 } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -432,9 +433,14 @@ export default function AdminDashboardPage() {
       {/* Main Content */}
       <main className="flex-1 p-8">
         {loading ? (
-          <p>Loading...</p>
+          <div className="flex flex-col justify-center items-center h-[60vh] text-teal-600">
+            <Loader2 className="animate-spin mb-4" size={48} />
+            <p className="text-lg font-medium text-gray-600">Analyzing financial data...</p>
+          </div>
         ) : error ? (
-          <p className="text-red-500">{error}</p>
+          <div className="bg-rose-50 border border-rose-200 text-rose-600 p-6 rounded-xl text-center shadow-sm">
+            <p className="text-lg font-semibold">{error}</p>
+          </div>
         ) : (
           <>
             {/* {activeTab === "dashboard" && ( */}

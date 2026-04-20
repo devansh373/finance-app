@@ -6,4 +6,5 @@ const api = axios.create({
   withCredentials: true, 
 });
 
+export const isAxiosError = axios.isAxiosError;
 export default api;

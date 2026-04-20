@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { User } from "@/types/types";
+import { Loader2 } from "lucide-react";
 
 // --- NEW MODAL COMPONENT ---
 
@@ -177,8 +178,20 @@ export default function Users() {
     }
   };
 
-  if (loading) return <p>Loading users...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading)
+    return (
+      <div className="flex flex-col justify-center items-center h-[60vh] text-teal-600">
+        <Loader2 className="animate-spin mb-4" size={48} />
+        <p className="text-lg font-medium text-gray-600">Retrieving user records...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="bg-rose-50 border border-rose-200 text-rose-600 p-6 rounded-xl text-center shadow-sm">
+        <p className="text-lg font-semibold">{error}</p>
+      </div>
+    );
 
   if (users.length === 0) {
     return (
