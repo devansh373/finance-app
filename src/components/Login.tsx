@@ -3,7 +3,7 @@
 "use client";
 import { useState } from "react";
 import api from "@/lib/api"; 
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import {  useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 import { Loader2, Mail, Lock, Eye, EyeOff } from "lucide-react";

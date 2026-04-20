@@ -6,6 +6,8 @@ import {
   UserCheck,
   Lock,
   BarChart2,
+  Info,
+  AlertCircle
 } from "lucide-react";
 
 export default function HomePage() {
@@ -25,6 +27,35 @@ export default function HomePage() {
                    rounded-full blur-3xl opacity-90 z-10"
         aria-hidden="true"
       />
+
+      {/* Deployment Notice Section */}
+      <div className="z-20 w-full max-w-4xl mb-12 animate-in fade-in slide-in-from-top duration-700">
+        <div className="bg-indigo-900/20 backdrop-blur-md border border-indigo-500/30 rounded-2xl p-6 text-left flex flex-col md:flex-row items-center gap-6 shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-1 h-full bg-teal-500" />
+          
+          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-400 group-hover:scale-110 transition-transform duration-500">
+            <Info size={28} />
+          </div>
+
+          <div className="flex-grow space-y-3">
+            <h4 className="text-teal-400 font-bold tracking-wider text-sm uppercase">Development & Deployment Status</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="text-indigo-400 flex-shrink-0 mt-1" size={18} />
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  <span className="text-white font-semibold">Database Restriction:</span> Render free tier only allows 1 Postgres DB at a time (currently active in another project).
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <TrendingUp className="text-emerald-400 flex-shrink-0 mt-1" size={18} />
+                <p className="text-gray-300 text-sm leading-relaxed">
+                   <span className="text-white font-semibold">AI Intelligence:</span> Chatbot is fully ready; exploring free options to deploy its vector memory.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="space-y-8 max-w-5xl mb-32 z-10">
         <h1 className="text-5xl  tracking-wider text-white sm:text-6xl md:text-8xl leading-tight">
